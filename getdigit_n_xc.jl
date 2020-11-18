@@ -20,6 +20,27 @@ module GetDigit_n_xc
         return find_zero(f, INITX, Order8())
     end
 
+    function getn(func, xc, maxn, precision)
+        nlo = 1
+        nhi = maxn
+
+        # 正しいnを二分探索で求める
+        while nhi - nlo > 1
+            n = (nhi + nlo) >> 1
+
+            setprecision(MAX_PRECISION)
+            res = abs(func(xc, n) - BigFloat(π))
+            if res < BigFloat(10)^(BigFloat(-precision - 1))
+                nhi = n        
+            else 
+                nlo = n
+            end
+
+            @printf("n = %d, nhi = %d, nlo = %d, res = %.100f\n", n, nlo, nhi, res)
+        end
+
+        return nhi != maxn ? nhi : nothing
+    end
 
     function getn_linear(func, xc, maxn, digit)
         for n = 1:maxn + 1

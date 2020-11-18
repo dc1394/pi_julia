@@ -22,6 +22,7 @@ function main()
     precision = GetDigit_n_xc.getdigit_2(gauss_gl, xc, n, DIGIT, precision)
 
     setprecision(precision)
+    MyPrintf.myprintf("xc = ", precision, xc)
     MyPrintf.myprintf("π（計算値） = ", DIGIT, gauss_gl(xc, n))
     MyPrintf.myprintf("π（厳密値） = ", DIGIT, BigFloat(π))
     @printf("xc = %.14f, n = %d, 計算%d桁で、%d桁求まりました\n", xc, n, precision, DIGIT)

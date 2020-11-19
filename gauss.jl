@@ -8,9 +8,9 @@ using .Simpson_2
 using .Simpson_noparallel
 using .MyPrintf
 
-const DIGIT = 15
+const DIGIT = 17
 const MAXDH = BigFloat(1) / BigFloat(500)
-const MAXN = 10000
+const MAXN = 1000
 
 function gauss(xc::BigFloat, dh::BigFloat)
     res = Simpson_2.simpson(x::BigFloat -> exp(- x * x), BigFloat(0), xc, dh)
@@ -24,9 +24,9 @@ function gauss(xc::BigFloat, n::Int64)
 end
 
 function main()
-    xc = GetDigit_n_xc.getxc(gauss, MAXDH, DIGIT)
-    n = GetDigit_n_xc.getn(gauss, xc, MAXN, DIGIT)
-    precision = GetDigit_n_xc.getdigit(gauss, xc, n, DIGIT)
+    xc = GetDigit_n_xc.getxc(gauss, MAXDH, DIGIT, true)
+    n = GetDigit_n_xc.getn_even_linear(gauss, xc, MAXN, DIGIT, true)
+    precision = GetDigit_n_xc.getdigit(gauss, xc, n, DIGIT, true)
     precision = GetDigit_n_xc.getdigit_2(gauss, xc, n, DIGIT, precision)
 
     setprecision(precision)

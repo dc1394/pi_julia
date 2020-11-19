@@ -6,43 +6,29 @@ module GetDigit_n_xc
     const MAX_PRECISION = 100
     const π_str = "3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798"
     
-    function getxc(func, maxn::Int64, digit)
+    function getxc(func, dh::BigFloat, digit, half_presicion)
         setprecision(MAX_PRECISION)
-        f = x -> func(x, maxn) - BigFloat(π) + BigFloat(10)^(BigFloat(-digit - 1))
-
-        return find_zero(f, INITX, Order8())
-    end
-
-    function getxc(func, dh::BigFloat, digit)
-        setprecision(MAX_PRECISION)
-        f = x -> func(x, dh) - BigFloat(π) + BigFloat(10)^(BigFloat(-digit - 1))
-
-        return find_zero(f, INITX, Order8())
-    end
-
-    function getn(func, xc, maxn, precision)
-        nlo = 1
-        nhi = maxn
-
-        # 正しいnを二分探索で求める
-        while nhi - nlo > 1
-            n = (nhi + nlo) >> 1
-
-            setprecision(MAX_PRECISION)
-            res = abs(func(xc, n) - BigFloat(π))
-            if res < BigFloat(10)^(BigFloat(-precision - 1))
-                nhi = n        
-            else 
-                nlo = n
-            end
-
-            @printf("n = %d, nhi = %d, nlo = %d, res = %.100f\n", n, nlo, nhi, res)
+        if half_presicion
+            f = x -> func(x, dh) - BigFloat(π) + BigFloat(5) * BigFloat(10)^(BigFloat(-digit - 1))
+        else
+            f = x -> func(x, dh) - BigFloat(π) + BigFloat(10)^(BigFloat(-digit - 1))
         end
 
-        return nhi != maxn ? nhi : nothing
+        return find_zero(f, INITX, Order8())
     end
 
-    function getn_linear(func, xc, maxn, digit)
+    function getxc(func, maxn::Int64, digit, half_presicion)
+        setprecision(MAX_PRECISION)
+        if half_presicion
+            f = x -> func(x, maxn) - BigFloat(π) + BigFloat(5) * BigFloat(10)^(BigFloat(-digit - 1))
+        else
+            f = x -> func(x, maxn) - BigFloat(π) + BigFloat(10)^(BigFloat(-digit - 1))
+        end
+
+        return find_zero(f, INITX, Order8())
+    end
+
+    function getn_linear(func, xc, maxn, precision, half_precision)
         for n = 1:maxn + 1
             if n == maxn + 1
                 return nothing
@@ -52,15 +38,38 @@ module GetDigit_n_xc
             res = abs(func(xc, n) - BigFloat(π))
             @printf("n = %d, res = %.50f\n", n, res)
 
-            if res < BigFloat(10)^(BigFloat(-digit - 1))
-                return n  
+            if half_precision && res < BigFloat(5) * BigFloat(10)^(BigFloat(-precision - 1))
+                return n
+            elseif !half_precision && res < BigFloat(10)^(BigFloat(-precision - 1))
+                return n
             end
         end
 
         return nhi != MAXN ? nhi : nothing
     end
 
-    function getdigit(func, xc, n, precision)
+    function getn_even_linear(func, xc, maxn, precision, half_precision)
+        maxn = maxn & 1 == 0 ? maxn : maxn + 1
+        for n = 2:2:maxn + 2
+            if n == maxn + 2
+                return nothing
+            end
+
+            setprecision(MAX_PRECISION)
+            res = abs(func(xc, n) - BigFloat(π))
+            @printf("n = %d, res = %.50f\n", n, res)
+
+            if half_precision && res < BigFloat(5) * BigFloat(10)^(BigFloat(-precision - 1))
+                return n
+            elseif !half_precision && res < BigFloat(10)^(BigFloat(-precision - 1))
+                return n
+            end
+        end
+
+        return nhi != MAXN ? nhi : nothing
+    end
+
+    function getdigit(func, xc, n, precision, half_precision)
         plo = precision
         phi = MAX_PRECISION
 
@@ -70,7 +79,9 @@ module GetDigit_n_xc
 
             setprecision(p)
             res = abs(func(xc, n) - BigFloat(π))
-            if res < BigFloat(10)^(BigFloat(-precision - 1))
+            if half_precision && res < BigFloat(5) * BigFloat(10)^(BigFloat(-precision - 1))
+                phi = p
+            elseif !half_precision && res < BigFloat(10)^(BigFloat(-precision - 1))
                 phi = p
             else
                 plo = p

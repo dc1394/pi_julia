@@ -14,8 +14,8 @@ function circle_4(n)
 end
 
 function main()
-    n = GetDigit_n.getn_even(circle_4, MAXN, DIGIT)
-    precision = GetDigit_n.getdigit(circle_4, n, DIGIT)
+    n = GetDigit_n.getn_even(circle_4, MAXN, DIGIT, true)
+    precision = GetDigit_n.getdigit(circle_4, n, DIGIT, true)
     precision = GetDigit_n.getdigit_2(circle_4, n, DIGIT, precision)
 
     setprecision(precision)

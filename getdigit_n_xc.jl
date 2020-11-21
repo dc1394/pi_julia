@@ -87,7 +87,7 @@ module GetDigit_n_xc
                 plo = p
             end
 
-            @printf("p = %d, phi = %d, plo = %d, res = %.100f\n", p, plo, phi, res)
+            @printf("p = %d, plo = %d, phi = %d, res = %.100f\n", p, plo, phi, res)
         end
 
         return phi != MAX_PRECISION ? phi : nothing

@@ -1,7 +1,7 @@
 module GetDigit_n
     using Printf
 
-    const MAX_PRECISION = 500
+    const MAX_PRECISION = 300
     const π_str = "3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798"
     
     function getn(func, maxn, precision, half_precision)
@@ -22,12 +22,16 @@ module GetDigit_n
                 nlo = n
             end
 
-            @printf("n = %d, nhi = %d, nlo = %d, res = %.100f\n", n, nlo, nhi, res)
+            @printf("n = %d, nlo = %d, nhi = %d, res = %.100f\n", n, nlo, nhi, res)
         end
 
-        return nhi != maxn ? nhi : nothing
+        if nhi != maxn 
+            return nhi
+        else
+            throw(DomainError(maxn, "MAXNの値が少なすぎる"))
+        end
     end
-    
+
     function getn_even(func, maxn, precision, half_precision)
         nlo = 2
         nhi = maxn
@@ -47,16 +51,20 @@ module GetDigit_n
                 nlo = n
             end
 
-            @printf("n = %d, nhi = %d, nlo = %d, res = %.100f\n", n, nlo, nhi, res)
+            @printf("n = %d, nlo = %d, nhi = %d, res = %.100f\n", n, nlo, nhi, res)
         end
 
-        return nhi != maxn ? nhi : nothing
+        if nhi != maxn 
+            return nhi
+        else
+            throw(DomainError(maxn, "MAXNの値が少なすぎる"))
+        end
     end
 
     function getn_linear(func, maxn, precision, half_precision)
         for n = 1:maxn + 1
             if n == maxn + 1
-                return nothing
+                throw(DomainError(maxn, "MAXNの値が少なすぎる"))
             end
 
             setprecision(MAX_PRECISION)
@@ -89,10 +97,14 @@ module GetDigit_n
                 plo = p
             end
 
-            @printf("p = %d, phi = %d, plo = %d, res = %.100f\n", p, plo, phi, res)
+            @printf("p = %d, plo = %d, phi = %d, res = %.100f\n", p, plo, phi, res)
         end
 
-        return phi != MAX_PRECISION ? phi : nothing
+        if phi != MAX_PRECISION 
+            return phi
+        else
+            throw(DomainError(MAX_PRECISION, "MAXNの値が少なすぎる"))
+        end
     end
 
     function getdigit_2(func, n, digit, precision)
@@ -108,7 +120,7 @@ module GetDigit_n
             end
         end
 
-        return nothing
+        throw(DomainError("謎のエラー"))
     end
     
     function getdigit_3(func, n, digit, precision)

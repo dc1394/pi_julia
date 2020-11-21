@@ -17,7 +17,7 @@ function wallis(n)
 end
 
 function main()
-    n = GetDigit_n.getn(wallis, MAXN, DIGIT, true)
+    n = GetDigit_n.getn_even(wallis, MAXN, DIGIT, true)
     precision = GetDigit_n.getdigit(wallis, n, DIGIT, true)
     precision = GetDigit_n.getdigit_2(wallis, n, DIGIT, precision)
 
